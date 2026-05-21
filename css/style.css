@@ -1,0 +1,224 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'ZCOOL KuaiLe', cursive, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+}
+
+.sun {
+    box-shadow: 0 0 40px rgba(255, 200, 0, 0.6),
+                0 0 80px rgba(255, 200, 0, 0.4),
+                0 0 120px rgba(255, 200, 0, 0.2);
+}
+
+.cloud {
+    width: 60px;
+    height: 25px;
+    background: white;
+    border-radius: 50px;
+    position: relative;
+}
+
+.cloud::before,
+.cloud::after {
+    content: '';
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+}
+
+.cloud::before {
+    width: 30px;
+    height: 30px;
+    top: -15px;
+    left: 10px;
+}
+
+.cloud::after {
+    width: 20px;
+    height: 20px;
+    top: -10px;
+    right: 10px;
+}
+
+.cloud-1 {
+    animation: float 20s ease-in-out infinite;
+}
+
+.cloud-2 {
+    animation: float 25s ease-in-out infinite reverse;
+}
+
+.cloud-3 {
+    animation: float 18s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    50% {
+        transform: translateX(30px);
+    }
+}
+
+.plot {
+    min-height: 80px;
+    position: relative;
+    overflow: hidden;
+}
+
+.plot::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.3) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+.action-btn {
+    position: relative;
+    overflow: hidden;
+}
+
+.action-btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(255,255,255,0.2) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+.nav-btn.active {
+    background-color: rgba(76, 175, 80, 0.2);
+}
+
+.nav-btn.active span:last-child {
+    color: #4CAF50;
+    font-weight: bold;
+}
+
+.modal-content {
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.shop-tab {
+    font-size: 0.875rem;
+}
+
+#toast {
+    white-space: nowrap;
+}
+
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.3);
+}
+
+@keyframes coinFly {
+    0% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-50px) scale(0.5);
+        opacity: 0;
+    }
+}
+
+@keyframes shake {
+    0%, 100% {
+        transform: rotate(0deg);
+    }
+    25% {
+        transform: rotate(-5deg);
+    }
+    75% {
+        transform: rotate(5deg);
+    }
+}
+
+.plot:hover {
+    animation: shake 0.3s ease-in-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .cloud-1,
+    .cloud-2,
+    .cloud-3 {
+        animation: none;
+    }
+    
+    .sun {
+        animation: none;
+    }
+    
+    .plot:hover {
+        animation: none;
+    }
+}
+
+@media (max-width: 375px) {
+    .plot {
+        min-height: 70px;
+    }
+    
+    .action-btn {
+        padding: 0.5rem;
+    }
+    
+    .action-btn span:first-child {
+        font-size: 1.5rem;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(100%);
+    }
+    to {
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+button:active {
+    transform: scale(0.95);
+}
+
+.select-seed:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.sell-product:hover {
+    transform: scale(1.1);
+}
