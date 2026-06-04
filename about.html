@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>关于我 - 田园小农场</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'ZCOOL KuaiLe', cursive, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+        .cloud {
+            width: 60px;
+            height: 25px;
+            background: white;
+            border-radius: 50px;
+            position: relative;
+        }
+        .cloud::before, .cloud::after {
+            content: '';
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+        }
+        .cloud::before { width: 30px; height: 30px; top: -15px; left: 10px; }
+        .cloud::after { width: 20px; height: 20px; top: -10px; right: 10px; }
+        .cloud-1 { animation: float 20s ease-in-out infinite; }
+        .cloud-2 { animation: float 25s ease-in-out infinite reverse; }
+        @keyframes float { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(30px); } }
+        .card { transition: transform 0.3s, box-shadow 0.3s; }
+        .card:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body class="font-cute bg-gradient-to-b from-sky-300 via-green-100 to-green-200 min-h-screen">
+    <div class="fixed inset-0 pointer-events-none overflow-hidden">
+        <div class="sun absolute top-4 right-4 w-16 h-16 bg-yellow-300 rounded-full shadow-lg animate-pulse"></div>
+        <div class="cloud cloud-1 absolute top-12 left-4 opacity-80"></div>
+        <div class="cloud cloud-2 absolute top-20 right-8 opacity-60"></div>
+    </div>
+
+    <div class="max-w-md mx-auto min-h-screen flex flex-col relative z-10">
+        <header class="bg-gradient-to-r from-grass to-grass-light text-white p-4 rounded-b-3xl shadow-lg">
+            <div class="flex items-center gap-3">
+                <button id="backBtn" class="text-2xl hover:scale-110 transition-transform">←</button>
+                <h1 class="text-xl font-bold">👤 关于我</h1>
+            </div>
+        </header>
+
+        <main class="flex-1 p-4 space-y-4">
+            <div class="bg-white/90 backdrop-blur-sm rounded-3xl p-6 shadow-lg card">
+                <div class="text-center mb-6">
+                    <img src="images/avatar.jfif" 
+                         alt="头像" class="w-24 h-24 rounded-full mx-auto mb-4 border-4 border-grass-light object-cover">
+                    <h2 class="text-2xl font-bold text-soil">朱艺琳</h2>
+                    <p class="text-gray-500 text-sm mt-1">应届毕业生 | 移动端开发</p>
+                </div>
+                
+                <div class="space-y-3 text-sm">
+                    <div class="flex items-center gap-2 text-gray-600">
+                        <span>📱</span>
+                        <span>19739072158</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-gray-600">
+                        <span>📧</span>
+                        <span>2798768915@qq.com</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-gray-600">
+                        <span>📍</span>
+                        <span>福建</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white/90 backdrop-blur-sm rounded-3xl p-6 shadow-lg card">
+                <h3 class="text-lg font-bold text-soil mb-4 flex items-center gap-2">
+                    <span>🎓</span>教育经历
+                </h3>
+                <div class="space-y-4">
+                    <div>
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="font-bold text-grass">老鱼大学</p>
+                                <p class="text-sm text-gray-500">计算机科学与技术 · 本科</p>
+                            </div>
+                            <span class="text-sm text-gray-400">2020-09 ~ 2024-07</span>
+                        </div>
+                        <p class="text-sm text-gray-600 mt-2">全日制 | 福州软件职业技术学院 | 福建</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white/90 backdrop-blur-sm rounded-3xl p-6 shadow-lg card">
+                <h3 class="text-lg font-bold text-soil mb-4 flex items-center gap-2">
+                    <span>📚</span>主修课程
+                </h3>
+                <div class="flex flex-wrap gap-2">
+                    <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">Python 编程</span>
+                    <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">MySQL 数据库</span>
+                    <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">Linux 运维</span>
+                    <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">机器学习基础</span>
+                    <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">深度学习</span>
+                    <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">计算机视觉</span>
+                    <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">NLP 自然语言处理</span>
+                </div>
+            </div>
+
+            <div class="bg-white/90 backdrop-blur-sm rounded-3xl p-6 shadow-lg card">
+                <h3 class="text-lg font-bold text-soil mb-4 flex items-center gap-2">
+                    <span>🌟</span>学业亮点
+                </h3>
+                <div class="space-y-2 text-sm text-gray-600">
+                    <p>• 依托校企（网龙）产教实训平台完成全周期实训</p>
+                    <p>• 熟练完成数据采集处理、模型训练调参、AI项目部署落地</p>
+                    <p>• 参与校内AI技能竞赛，深耕图像识别与文本分类方向</p>
+                </div>
+            </div>
+
+            <div class="bg-white/90 backdrop-blur-sm rounded-3xl p-6 shadow-lg card">
+                <h3 class="text-lg font-bold text-soil mb-4 flex items-center gap-2">
+                    <span>🏆</span>奖学金
+                </h3>
+                <div class="space-y-2 text-sm text-gray-600">
+                    <p>• 2024-2025 学年一等奖学金</p>
+                    <p>• 2024-2025 学年二等奖学金</p>
+                </div>
+            </div>
+
+            <div class="bg-white/90 backdrop-blur-sm rounded-3xl p-6 shadow-lg card">
+                <h3 class="text-lg font-bold text-soil mb-4 flex items-center gap-2">
+                    <span>💻</span>专业技能
+                </h3>
+                
+                <div class="mb-4">
+                    <p class="font-bold text-grass text-sm mb-2">编程语言与数据处理</p>
+                    <p class="text-sm text-gray-600">熟练 Python、Pandas/Numpy 数据清洗、爬虫采集</p>
+                </div>
+                
+                <div class="mb-4">
+                    <p class="font-bold text-grass text-sm mb-2">人工智能核心技术</p>
+                    <div class="text-sm text-gray-600 space-y-1">
+                        <p>• 数据方向：全流程数据标注、数据策划划分</p>
+                        <p>• 机器视觉：OpenCV 图像处理、目标检测部署</p>
+                        <p>• 深度学习：PyTorch 基础搭建、优化部署</p>
+                        <p>• NLP：基于 API 实现关键词提取、文本分类</p>
+                    </div>
+                </div>
+                
+                <div>
+                    <p class="font-bold text-grass text-sm mb-2">系统与运维</p>
+                    <p class="text-sm text-gray-600">Linux 常用命令、服务器环境配置、Git 版本管理、Office 数据统计分析</p>
+                </div>
+            </div>
+        </main>
+
+        <nav class="bg-white/95 backdrop-blur-sm border-t border-gray-200 p-3">
+            <button id="backBtnBottom" class="w-full bg-grass hover:bg-grass-light text-white rounded-xl py-3 font-bold transition-colors flex items-center justify-center gap-2">
+                <span>←</span>
+                <span>返回游戏</span>
+            </button>
+        </nav>
+    </div>
+
+    <script>
+        document.getElementById('backBtn').addEventListener('click', () => {
+            window.location.href = 'index.html';
+        });
+        document.getElementById('backBtnBottom').addEventListener('click', () => {
+            window.location.href = 'index.html';
+        });
+    </script>
+</body>
+</html>
