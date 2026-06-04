@@ -42,7 +42,8 @@ const Farm = {
         
         plot.cropId = cropId;
         plot.plantTime = Date.now();
-        plot.matureTime = Date.now() + crop.growTime;
+        const growTime = crop.growTime * (this.data.difficulty === 'fast' ? 0.5 : 1);
+        plot.matureTime = Date.now() + growTime;
         plot.isMature = false;
         
         return true;
@@ -132,8 +133,9 @@ const Farm = {
         const crop = Crops.getById(plot.cropId);
         if (!crop) return 0;
         
+        const growTime = crop.growTime * (this.data.difficulty === 'fast' ? 0.5 : 1);
         const elapsed = Date.now() - plot.plantTime;
-        const progress = elapsed / crop.growTime;
+        const progress = elapsed / growTime;
         
         return Math.min(progress, 1);
     },
