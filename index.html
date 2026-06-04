@@ -29,7 +29,30 @@
     </script>
 </head>
 <body class="font-cute bg-gradient-to-b from-sky via-green-100 to-grass-light min-h-screen overflow-x-hidden">
-    <div id="app" class="max-w-md mx-auto min-h-screen flex flex-col relative">
+    <div id="splashScreen" class="fixed inset-0 bg-gradient-to-b from-sky to-grass-light flex flex-col items-center justify-center z-[100]">
+        <div class="text-center">
+            <div id="splashLogo" class="text-8xl mb-6 animate-bounce">🌾</div>
+            <h1 class="text-4xl font-bold text-white mb-4 drop-shadow-lg">田园小农场</h1>
+            <p class="text-white/80 mb-8">悠闲种植，快乐收获</p>
+            <div class="flex justify-center gap-2 mb-8">
+                <div class="w-3 h-3 bg-white/60 rounded-full animate-bounce" style="animation-delay: 0ms;"></div>
+                <div class="w-3 h-3 bg-white/60 rounded-full animate-bounce" style="animation-delay: 150ms;"></div>
+                <div class="w-3 h-3 bg-white/60 rounded-full animate-bounce" style="animation-delay: 300ms;"></div>
+            </div>
+            <button id="startGameBtn" class="bg-white text-grass font-bold px-8 py-3 rounded-full text-xl shadow-lg hover:scale-105 transition-transform hidden">
+                开始游戏 🎮
+            </button>
+        </div>
+        <div class="absolute bottom-8 text-white/60 text-sm">
+            加载中...
+        </div>
+    </div>
+
+    <div id="transitionOverlay" class="fixed inset-0 bg-black/50 z-[90] hidden flex items-center justify-center">
+        <div class="text-6xl animate-spin">🌾</div>
+    </div>
+
+    <div id="app" class="max-w-md mx-auto min-h-screen flex flex-col relative opacity-0 transition-opacity duration-500">
         
         <div id="decorations" class="fixed inset-0 pointer-events-none overflow-hidden">
             <div class="sun absolute top-4 right-4 w-16 h-16 bg-yellow-300 rounded-full shadow-lg animate-pulse"></div>
@@ -39,17 +62,47 @@
         </div>
 
         <header class="bg-gradient-to-r from-grass to-grass-light text-white p-4 rounded-b-3xl shadow-lg relative z-10">
-            <div class="flex justify-between items-center">
+            <div class="flex justify-between items-center mb-3">
                 <div class="flex items-center gap-2">
                     <span class="text-3xl">🌾</span>
                     <h1 class="text-xl font-bold">田园小农场</h1>
                 </div>
-                <div class="flex items-center gap-4">
-                    <div id="coinDisplay" class="bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 flex items-center gap-2">
-                        <span class="text-2xl">🪙</span>
-                        <span id="coinAmount" class="text-lg font-bold">100</span>
+                <div class="flex items-center gap-2">
+                    <button id="aboutBtn" class="text-xl hover:scale-110 transition-transform" title="关于我">👤</button>
+                    <button id="leaderboardBtn" class="text-xl hover:scale-110 transition-transform" title="排行榜">🏆</button>
+                    <button id="achievementsBtn" class="text-xl hover:scale-110 transition-transform" title="成就">🏅</button>
+                    <button id="settingsBtn" class="text-xl hover:scale-110 transition-transform" title="设置">⚙️</button>
+                </div>
+            </div>
+            
+            <div class="flex items-center justify-between">
+                <div class="flex gap-2">
+                    <div id="coinDisplay" class="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1.5 flex items-center gap-1.5">
+                        <span class="text-xl">🪙</span>
+                        <span id="coinAmount" class="font-bold">100</span>
                     </div>
-                    <button id="settingsBtn" class="text-2xl hover:scale-110 transition-transform">⚙️</button>
+                    <div id="scoreDisplay" class="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1.5 flex items-center gap-1.5">
+                        <span class="text-xl">⭐</span>
+                        <span id="scoreAmount" class="font-bold">0</span>
+                    </div>
+                </div>
+                
+                <div class="flex gap-2">
+                    <button id="pauseBtn" class="bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full px-3 py-1.5 text-sm font-bold transition-colors">⏸️ 暂停</button>
+                    <button id="restartBtn" class="bg-red-500/80 hover:bg-red-600 backdrop-blur-sm rounded-full px-3 py-1.5 text-sm font-bold transition-colors">🔄 重开</button>
+                </div>
+            </div>
+            
+            <div class="flex items-center justify-between mt-2 text-xs">
+                <div class="flex items-center gap-2">
+                    <span>难度:</span>
+                    <select id="difficultySelect" class="bg-white/30 rounded-lg px-2 py-1 text-white text-xs">
+                        <option value="normal">普通模式</option>
+                        <option value="fast">高产速熟</option>
+                    </select>
+                </div>
+                <div id="highScoreDisplay" class="text-white/80">
+                    最高分: <span id="highScoreAmount">0</span>
                 </div>
             </div>
         </header>
@@ -172,8 +225,138 @@
                         <span class="absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform"></span>
                     </button>
                 </div>
+                <div class="flex justify-between items-center p-3 bg-gray-100 rounded-xl">
+                    <span>主题</span>
+                    <select id="themeSelect" class="bg-gray-200 rounded-lg px-3 py-1 text-sm">
+                        <option value="green">绿野田园</option>
+                        <option value="autumn">秋日田园</option>
+                    </select>
+                </div>
                 <button id="resetGameBtn" class="w-full bg-red-500 hover:bg-red-600 text-white rounded-xl py-3 font-bold transition-all">
                     🗑️ 重置游戏
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="leaderboardModal" class="modal fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-end justify-center">
+        <div class="modal-content bg-white w-full max-w-md rounded-t-3xl p-6 transform translate-y-full transition-transform duration-300">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold text-soil">🏆 排行榜</h2>
+                <button class="close-modal text-2xl text-gray-500 hover:text-gray-700">✕</button>
+            </div>
+            
+            <div class="flex gap-2 mb-4">
+                <button id="sortByScore" class="sort-btn bg-grass text-white rounded-xl px-4 py-2 text-sm font-bold">按得分排序</button>
+                <button id="sortByTime" class="sort-btn bg-gray-200 text-gray-600 rounded-xl px-4 py-2 text-sm font-bold">按时间排序</button>
+            </div>
+            
+            <div id="leaderboardContent" class="max-h-64 overflow-y-auto space-y-2 mb-4">
+            </div>
+            
+            <div class="flex gap-3">
+                <input id="playerNameInput" class="flex-1 border border-gray-300 rounded-xl px-4 py-2 text-sm" placeholder="输入你的昵称">
+                <button id="saveScoreBtn" class="bg-grass hover:bg-grass-light text-white rounded-xl px-4 py-2 font-bold transition-colors">
+                    保存成绩
+                </button>
+            </div>
+            
+            <button id="clearLeaderboardBtn" class="w-full mt-3 bg-red-100 hover:bg-red-200 text-red-600 rounded-xl py-2 text-sm font-bold transition-colors">
+                🗑️ 清空排行榜
+            </button>
+        </div>
+    </div>
+
+    <div id="achievementsModal" class="modal fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-end justify-center">
+        <div class="modal-content bg-white w-full max-w-md rounded-t-3xl p-6 transform translate-y-full transition-transform duration-300">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold text-soil">🏅 成就</h2>
+                <button class="close-modal text-2xl text-gray-500 hover:text-gray-700">✕</button>
+            </div>
+            <div id="achievementsContent" class="grid grid-cols-1 gap-3">
+            </div>
+        </div>
+    </div>
+
+    <div id="achievementUnlockModal" class="modal fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="modal-content bg-white w-full max-w-sm rounded-3xl p-6 transform scale-95 opacity-0 transition-all duration-300 text-center">
+            <div id="achievementUnlockEmoji" class="text-6xl mb-4"></div>
+            <h3 id="achievementUnlockTitle" class="text-2xl font-bold text-grass mb-2"></h3>
+            <p id="achievementUnlockDesc" class="text-gray-600 mb-4"></p>
+            <button id="closeAchievementModal" class="bg-grass hover:bg-grass-light text-white rounded-xl px-6 py-2 font-bold transition-colors">
+                太棒了！🎉
+            </button>
+        </div>
+    </div>
+
+    <div id="guideModal" class="modal fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="modal-content bg-white w-full max-w-sm rounded-3xl p-6 transform scale-95 opacity-0 transition-all duration-300">
+            <div class="text-center mb-6">
+                <div class="text-5xl mb-4">🌱</div>
+                <h2 class="text-2xl font-bold text-soil">新手引导</h2>
+            </div>
+            <div class="space-y-4 text-gray-600 text-sm">
+                <div class="flex gap-3">
+                    <span class="text-xl">👆</span>
+                    <div>
+                        <p class="font-bold">选择地块</p>
+                        <p>点击空地选择要种植的土地</p>
+                    </div>
+                </div>
+                <div class="flex gap-3">
+                    <span class="text-xl">🌰</span>
+                    <div>
+                        <p class="font-bold">播种</p>
+                        <p>点击下方播种按钮选择种子</p>
+                    </div>
+                </div>
+                <div class="flex gap-3">
+                    <span class="text-xl">⏰</span>
+                    <div>
+                        <p class="font-bold">等待成熟</p>
+                        <p>作物会经历幼苗、成长、成熟三个阶段</p>
+                    </div>
+                </div>
+                <div class="flex gap-3">
+                    <span class="text-xl">🌾</span>
+                    <div>
+                        <p class="font-bold">收割</p>
+                        <p>成熟后点击收割获得农作物</p>
+                    </div>
+                </div>
+                <div class="flex gap-3">
+                    <span class="text-xl">💰</span>
+                    <div>
+                        <p class="font-bold">售卖</p>
+                        <p>在仓库售卖农作物获得金币</p>
+                    </div>
+                </div>
+            </div>
+            <div class="flex items-center gap-2 mt-6">
+                <input type="checkbox" id="hideGuide" class="w-5 h-5">
+                <label for="hideGuide" class="text-sm text-gray-500">不再提示</label>
+            </div>
+            <button id="closeGuideBtn" class="w-full mt-4 bg-grass hover:bg-grass-light text-white rounded-xl py-3 font-bold transition-colors">
+                开始游戏 🎮
+            </button>
+        </div>
+    </div>
+
+    <div id="shareModal" class="modal fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-end justify-center">
+        <div class="modal-content bg-white w-full max-w-md rounded-t-3xl p-6 transform translate-y-full transition-transform duration-300">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold text-soil">📤 分享成绩</h2>
+                <button class="close-modal text-2xl text-gray-500 hover:text-gray-700">✕</button>
+            </div>
+            <div id="shareContent" class="bg-gray-100 rounded-xl p-4 mb-4">
+                <p id="shareText" class="text-gray-700 text-center"></p>
+            </div>
+            <div class="flex gap-3">
+                <button id="copyShareBtn" class="flex-1 bg-grass hover:bg-grass-light text-white rounded-xl py-3 font-bold transition-colors">
+                    📋 复制到剪贴板
+                </button>
+                <button id="screenshotBtn" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white rounded-xl py-3 font-bold transition-colors">
+                    📷 生成截图
                 </button>
             </div>
         </div>
