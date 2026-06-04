@@ -1,15 +1,47 @@
 const UI = {
     selectedPlotId: null,
     selectedSeedId: null,
+    sortBy: 'score',
 
     init() {
         this.bindEvents();
         this.initModals();
+        this.initSplashScreen();
+    },
+
+    initSplashScreen() {
+        const splashScreen = document.getElementById('splashScreen');
+        const app = document.getElementById('app');
+        
+        setTimeout(() => {
+            document.querySelector('.absolute.bottom-8').textContent = '加载完成！';
+            document.getElementById('startGameBtn').classList.remove('hidden');
+        }, 2000);
+        
+        document.getElementById('startGameBtn').addEventListener('click', () => {
+            splashScreen.classList.add('animate-fade-out');
+            setTimeout(() => {
+                splashScreen.style.display = 'none';
+                app.style.opacity = '1';
+            }, 500);
+        });
     },
 
     bindEvents() {
         document.getElementById('settingsBtn').addEventListener('click', () => {
             this.openModal('settingsModal', 'scale');
+        });
+
+        document.getElementById('aboutBtn').addEventListener('click', () => {
+            window.location.href = 'about.html';
+        });
+
+        document.getElementById('leaderboardBtn').addEventListener('click', () => {
+            this.openLeaderboard();
+        });
+
+        document.getElementById('achievementsBtn').addEventListener('click', () => {
+            this.openAchievements();
         });
 
         document.getElementById('shopNavBtn').addEventListener('click', () => {
@@ -51,10 +83,71 @@ const UI = {
             }
         });
 
+        document.getElementById('pauseBtn').addEventListener('click', () => {
+            Game.togglePause();
+        });
+
+        document.getElementById('restartBtn').addEventListener('click', () => {
+            if (confirm('确定要重新开始游戏吗？所有进度将丢失！')) {
+                Game.reset();
+            }
+        });
+
+        document.getElementById('difficultySelect').addEventListener('change', (e) => {
+            Game.setDifficulty(e.target.value);
+        });
+
+        document.getElementById('themeSelect').addEventListener('change', (e) => {
+            Game.setTheme(e.target.value);
+        });
+
         document.querySelectorAll('.shop-tab').forEach(tab => {
             tab.addEventListener('click', (e) => {
                 this.switchShopTab(e.target.dataset.tab);
             });
+        });
+
+        document.getElementById('sortByScore').addEventListener('click', () => {
+            this.sortBy = 'score';
+            this.updateLeaderboard();
+        });
+
+        document.getElementById('sortByTime').addEventListener('click', () => {
+            this.sortBy = 'time';
+            this.updateLeaderboard();
+        });
+
+        document.getElementById('saveScoreBtn').addEventListener('click', () => {
+            const playerName = document.getElementById('playerNameInput').value;
+            Game.saveScoreToLeaderboard(playerName);
+            this.updateLeaderboard();
+        });
+
+        document.getElementById('clearLeaderboardBtn').addEventListener('click', () => {
+            if (confirm('确定要清空排行榜吗？')) {
+                Storage.clearLeaderboard();
+                this.updateLeaderboard();
+            }
+        });
+
+        document.getElementById('closeAchievementModal').addEventListener('click', () => {
+            this.closeModal('achievementUnlockModal', 'scale');
+        });
+
+        document.getElementById('closeGuideBtn').addEventListener('click', () => {
+            const hideGuide = document.getElementById('hideGuide').checked;
+            if (hideGuide) {
+                Storage.setGuideHidden(true);
+            }
+            this.closeModal('guideModal', 'scale');
+        });
+
+        document.getElementById('copyShareBtn').addEventListener('click', () => {
+            this.copyShareText();
+        });
+
+        document.getElementById('screenshotBtn').addEventListener('click', () => {
+            this.takeScreenshot();
         });
     },
 
@@ -62,7 +155,7 @@ const UI = {
         document.querySelectorAll('.modal').forEach(modal => {
             modal.addEventListener('click', (e) => {
                 if (e.target === modal) {
-                    const isScale = modal.id === 'settingsModal';
+                    const isScale = modal.id === 'settingsModal' || modal.id === 'guideModal' || modal.id === 'achievementUnlockModal';
                     this.closeModal(modal.id, isScale ? 'scale' : 'slide');
                 }
             });
@@ -71,7 +164,7 @@ const UI = {
         document.querySelectorAll('.close-modal').forEach(btn => {
             btn.addEventListener('click', () => {
                 const modal = btn.closest('.modal');
-                const isScale = modal.id === 'settingsModal';
+                const isScale = modal.id === 'settingsModal' || modal.id === 'guideModal' || modal.id === 'achievementUnlockModal';
                 this.closeModal(modal.id, isScale ? 'scale' : 'slide');
             });
         });
@@ -108,6 +201,89 @@ const UI = {
         }, 300);
     },
 
+    openGuide() {
+        this.openModal('guideModal', 'scale');
+    },
+
+    openLeaderboard() {
+        this.updateLeaderboard();
+        this.openModal('leaderboardModal');
+    },
+
+    updateLeaderboard() {
+        const content = document.getElementById('leaderboardContent');
+        let leaderboard = Storage.loadLeaderboard();
+        
+        leaderboard = leaderboard.sort((a, b) => {
+            if (this.sortBy === 'score') {
+                return b.score - a.score;
+            } else {
+                return b.date - a.date;
+            }
+        });
+
+        if (leaderboard.length === 0) {
+            content.innerHTML = '<div class="text-center text-gray-500 py-8">暂无记录，快来创造记录吧！</div>';
+        } else {
+            content.innerHTML = leaderboard.map((entry, index) => {
+                const date = new Date(entry.date);
+                const dateStr = `${date.getMonth() + 1}/${date.getDate()} ${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')}`;
+                const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `#${index + 1}`;
+                
+                return `
+                    <div class="flex items-center gap-3 bg-gray-100 rounded-xl p-3">
+                        <span class="text-xl">${medal}</span>
+                        <div class="flex-1">
+                            <div class="font-bold text-soil">${entry.name}</div>
+                            <div class="text-xs text-gray-500">${dateStr}</div>
+                        </div>
+                        <div class="text-right">
+                            <div class="font-bold text-grass">${entry.score}</div>
+                            <div class="text-xs text-gray-500">${entry.harvestCount}次收获</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+    },
+
+    openAchievements() {
+        this.updateAchievements();
+        this.openModal('achievementsModal');
+    },
+
+    updateAchievements() {
+        const content = document.getElementById('achievementsContent');
+        const achievements = Storage.loadAchievements();
+        
+        const achievementList = [
+            { id: 'firstUnlock', emoji: '🔓', title: '首次开荒', description: '解锁第一块新土地', hint: '在商店购买新土地' },
+            { id: 'fullHarvest', emoji: '🌾', title: '满载丰收', description: '单次收割满仓', hint: '一次性收割6个以上作物' },
+            { id: 'fastPlanter', emoji: '⚡', title: '种植速手', description: '短时间批量播种', hint: '快速连续播种5次' }
+        ];
+
+        content.innerHTML = achievementList.map(item => {
+            const unlocked = achievements[item.id]?.unlocked || false;
+            return `
+                <div class="flex items-center gap-3 p-3 rounded-xl ${unlocked ? 'bg-gradient-to-r from-yellow-50 to-amber-100 border border-yellow-300' : 'bg-gray-100'}">
+                    <div class="text-3xl">${unlocked ? item.emoji : '🔒'}</div>
+                    <div class="flex-1">
+                        <div class="font-bold ${unlocked ? 'text-amber-700' : 'text-gray-400'}">${item.title}</div>
+                        <div class="text-sm ${unlocked ? 'text-amber-600' : 'text-gray-400'}">${unlocked ? item.description : item.hint}</div>
+                    </div>
+                    <div class="text-xl">${unlocked ? '✅' : '❌'}</div>
+                </div>
+            `;
+        }).join('');
+    },
+
+    showAchievementUnlock(info) {
+        document.getElementById('achievementUnlockEmoji').textContent = info.emoji;
+        document.getElementById('achievementUnlockTitle').textContent = info.title;
+        document.getElementById('achievementUnlockDesc').textContent = info.description;
+        this.openModal('achievementUnlockModal', 'scale');
+    },
+
     openShop(tab = 'seeds') {
         this.switchShopTab(tab);
         this.openModal('shopModal');
@@ -138,21 +314,28 @@ const UI = {
     },
 
     renderSeedShop() {
+        const difficultyMultiplier = Game.data.difficulty === 'fast' ? 0.5 : 1;
+        const priceMultiplier = Game.data.difficulty === 'fast' ? 1.5 : 1;
+        
         return `
             <div class="grid grid-cols-2 gap-3">
-                ${Crops.config.map(crop => `
-                    <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-3 border border-green-200">
-                        <div class="text-center mb-2">
-                            <span class="text-3xl">${crop.emoji}</span>
-                            <div class="font-bold text-soil">${crop.name}种子</div>
-                            <div class="text-xs text-gray-500">成熟: ${Crops.formatTime(crop.growTime)}</div>
-                            <div class="text-xs text-green-600">收益: ${crop.sellPrice}金币</div>
+                ${Crops.config.map(crop => {
+                    const adjustedTime = Math.round(crop.growTime * difficultyMultiplier);
+                    const adjustedPrice = Math.round(crop.seedPrice * priceMultiplier);
+                    return `
+                        <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-3 border border-green-200">
+                            <div class="text-center mb-2">
+                                <span class="text-3xl">${crop.emoji}</span>
+                                <div class="font-bold text-soil">${crop.name}种子</div>
+                                <div class="text-xs text-gray-500">成熟: ${Crops.formatTime(adjustedTime)}</div>
+                                <div class="text-xs text-green-600">收益: ${crop.sellPrice}金币</div>
+                            </div>
+                            <button class="buy-seed-btn w-full bg-grass hover:bg-grass-light text-white rounded-lg py-2 text-sm font-bold transition-all" data-crop-id="${crop.id}">
+                                🪙 ${adjustedPrice} 购买
+                            </button>
                         </div>
-                        <button class="buy-seed-btn w-full bg-grass hover:bg-grass-light text-white rounded-lg py-2 text-sm font-bold transition-all" data-crop-id="${crop.id}">
-                            🪙 ${crop.seedPrice} 购买
-                        </button>
-                    </div>
-                `).join('')}
+                    `;
+                }).join('')}
             </div>
         `;
     },
@@ -363,14 +546,14 @@ const UI = {
                 
                 if (plot.isMature) {
                     div.innerHTML = `
-                        <span class="text-3xl animate-bounce">${crop.emoji}</span>
+                        <span class="text-3xl animate-bounce crop-emoji">${crop.emoji}</span>
                         <span class="text-xs text-green-600 font-bold mt-1">成熟!</span>
                     `;
                     div.classList.add('animate-pulse', 'bg-gradient-to-br', 'from-green-200', 'to-green-300');
                 } else {
                     const remaining = Farm.getRemainingTime(index);
                     div.innerHTML = `
-                        <span class="text-2xl">${stage}</span>
+                        <span class="text-2xl crop-emoji">${stage}</span>
                         <span class="text-xs text-amber-700 mt-1">${Crops.formatTime(remaining)}</span>
                     `;
                 }
@@ -477,6 +660,14 @@ const UI = {
         document.getElementById('coinAmount').textContent = Game.data.player.coins;
     },
 
+    updateScoreDisplay() {
+        document.getElementById('scoreAmount').textContent = Game.data.player.score;
+    },
+
+    updateHighScoreDisplay() {
+        document.getElementById('highScoreAmount').textContent = Game.data.highScore;
+    },
+
     showToast(message, duration = 2000) {
         const toast = document.getElementById('toast');
         const toastMessage = document.getElementById('toastMessage');
@@ -491,34 +682,66 @@ const UI = {
         }, duration);
     },
 
-    showCoinAnimation(amount, fromElement) {
-        const rect = fromElement.getBoundingClientRect();
+    showCoinAnimation(amount) {
         const coinDisplay = document.getElementById('coinDisplay');
         const targetRect = coinDisplay.getBoundingClientRect();
         
-        for (let i = 0; i < Math.min(5, Math.abs(amount) / 10); i++) {
+        const coinsToShow = Math.min(10, Math.floor(amount / 10) + 1);
+        
+        for (let i = 0; i < coinsToShow; i++) {
             setTimeout(() => {
                 const coin = document.createElement('div');
-                coin.className = 'text-2xl absolute';
+                coin.className = 'text-2xl absolute pointer-events-none';
                 coin.textContent = '🪙';
-                coin.style.left = `${rect.left + Math.random() * 30}px`;
-                coin.style.top = `${rect.top}px`;
-                coin.style.transition = 'all 0.6s ease-out';
+                coin.style.left = `${Math.random() * window.innerWidth}px`;
+                coin.style.top = `${window.innerHeight / 2}px`;
+                coin.style.transition = 'all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
                 coin.style.zIndex = '100';
+                coin.style.fontSize = `${20 + Math.random() * 16}px`;
                 
-                document.getElementById('coinAnimation').appendChild(coin);
+                document.body.appendChild(coin);
                 
                 setTimeout(() => {
-                    coin.style.left = `${targetRect.left + targetRect.width / 2}px`;
+                    coin.style.left = `${targetRect.left + targetRect.width / 2 - 10}px`;
                     coin.style.top = `${targetRect.top}px`;
                     coin.style.opacity = '0';
-                    coin.style.transform = 'scale(0.5)';
+                    coin.style.transform = 'scale(0.3)';
                 }, 50);
                 
                 setTimeout(() => {
                     coin.remove();
-                }, 700);
-            }, i * 100);
+                }, 900);
+            }, i * 80);
         }
+    },
+
+    showPlantAnimation(plotId, crop) {
+        const plot = document.querySelector(`[data-plot-id="${plotId}"]`);
+        if (plot) {
+            plot.classList.add('animate-plant');
+            setTimeout(() => {
+                plot.classList.remove('animate-plant');
+            }, 500);
+        }
+    },
+
+    openShareModal() {
+        const shareText = Game.getShareText();
+        document.getElementById('shareText').textContent = shareText;
+        this.openModal('shareModal');
+    },
+
+    copyShareText() {
+        const shareText = Game.getShareText();
+        navigator.clipboard.writeText(shareText).then(() => {
+            this.showToast('已复制到剪贴板！');
+            this.closeModal('shareModal');
+        }).catch(() => {
+            this.showToast('复制失败，请手动复制');
+        });
+    },
+
+    takeScreenshot() {
+        this.showToast('截图功能开发中...');
     }
 };
