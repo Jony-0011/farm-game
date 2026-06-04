@@ -9,7 +9,9 @@ const Shop = {
         const crop = Crops.getById(cropId);
         if (!crop) return { success: false, message: '种子不存在' };
         
-        const totalCost = crop.seedPrice * quantity;
+        const difficultyMultiplier = this.data.difficulty === 'fast' ? 1.5 : 1;
+        const totalCost = Math.round(crop.seedPrice * difficultyMultiplier * quantity);
+        
         if (this.data.player.coins < totalCost) {
             return { success: false, message: '金币不足' };
         }
