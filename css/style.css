@@ -160,6 +160,72 @@ body {
     animation: shake 0.3s ease-in-out;
 }
 
+@keyframes plantGrow {
+    0% {
+        transform: scale(0) translateY(20px);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.2) translateY(-5px);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1) translateY(0);
+        opacity: 1;
+    }
+}
+
+.animate-plant .crop-emoji {
+    animation: plantGrow 0.5s ease-out;
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+.animate-fade-out {
+    animation: fadeOut 0.5s ease-out forwards;
+}
+
+@keyframes bounceIn {
+    0% {
+        transform: scale(0.3);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    70% {
+        transform: scale(0.9);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes pulse-glow {
+    0%, 100% {
+        box-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+    }
+}
+
+.crop-emoji {
+    animation: bounceIn 0.3s ease-out;
+}
+
+.crop-emoji.mature {
+    animation: pulse-glow 1s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
     .cloud-1,
     .cloud-2,
@@ -172,6 +238,10 @@ body {
     }
     
     .plot:hover {
+        animation: none;
+    }
+    
+    .animate-bounce {
         animation: none;
     }
 }
@@ -221,4 +291,112 @@ button:active {
 
 .sell-product:hover {
     transform: scale(1.1);
+}
+
+.autumn-theme {
+    --grass: #c9a227;
+    --grass-light: #e6b800;
+    --soil: #8b4513;
+    --soil-light: #d2691e;
+    --sky: #f4a460;
+    --gold: #ffd700;
+    --gold-dark: #ffa500;
+}
+
+.autumn-theme body {
+    background: linear-gradient(to bottom, #f4a460, #deb887, #d2691e) !important;
+}
+
+.autumn-theme .sun {
+    background: #ff6347 !important;
+}
+
+.autumn-theme .cloud {
+    background: #deb887 !important;
+}
+
+.autumn-theme .cloud::before,
+.autumn-theme .cloud::after {
+    background: #deb887 !important;
+}
+
+.autumn-theme header {
+    background: linear-gradient(to right, #c9a227, #e6b800) !important;
+}
+
+.autumn-theme .plot {
+    background: linear-gradient(to bottom right, #cd853f, #d2691e) !important;
+    border-color: #8b4513 !important;
+}
+
+.autumn-theme .bg-green-100 {
+    background-color: #f4d03f !important;
+}
+
+.autumn-theme .bg-green-50 {
+    background-color: #fdf5e6 !important;
+}
+
+.autumn-theme .text-green-600 {
+    color: #c9a227 !important;
+}
+
+.autumn-theme .bg-grass {
+    background-color: #c9a227 !important;
+}
+
+.autumn-theme .hover\:bg-grass-light:hover {
+    background-color: #e6b800 !important;
+}
+
+.autumn-theme .ring-gold {
+    --tw-ring-color: #ff6347 !important;
+}
+
+@keyframes splash-enter {
+    0% {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+#splashScreen {
+    animation: splash-enter 0.5s ease-out;
+}
+
+@keyframes loading-dots {
+    0%, 100% {
+        opacity: 0.3;
+        transform: translateY(0);
+    }
+    50% {
+        opacity: 1;
+        transform: translateY(-5px);
+    }
+}
+
+.animate-bounce:nth-child(1) { animation-delay: 0ms; }
+.animate-bounce:nth-child(2) { animation-delay: 150ms; }
+.animate-bounce:nth-child(3) { animation-delay: 300ms; }
+
+.leaderboard-entry {
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.leaderboard-entry:hover {
+    transform: translateX(5px);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.achievement-card {
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.achievement-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
